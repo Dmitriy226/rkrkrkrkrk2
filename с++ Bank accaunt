@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+
+class BankAccount {
+private:
+    std::string accountNumber;
+    std::string ownerName;
+    double balance;
+
+public:
+    // Конструктор
+    BankAccount(const std::string& accNum, const std::string& owner, double initialBalance)
+        : accountNumber(accNum), ownerName(owner), balance(initialBalance) {}
+
+    // Метод для пополнения
+    void deposit(double amount) {
+        if (amount > 0) {
+            balance += amount;
+            std::cout << "Пополнен счет на " << amount << ". Текущий баланс: " << balance << std::endl;
+        } else {
+            std::cout << "Сумма пополнения должна быть положительной." << std::endl;
+        }
+    }
+
+    // Метод для снятия средств
+    void withdraw(double amount) {
+        if (amount > 0 && amount <= balance) {
+            balance -= amount;
+            std::cout << "Снято " << amount << ". Текущий баланс: " << balance << std::endl;
+        } else if (amount > balance) {
+            std::cout << "Недостаточно средств для снятия." << std::endl;
+        } else {
+            std::cout << "Сумма снятия должна быть положительной." << std::endl;
+        }
+    }
+
+    // Метод для получения текущего баланса
+    double getBalance() const {
+        return balance;
+    }
+};
+
+class SavingsAccount : public BankAccount {
+private:
+    double interestRate;
+
+public:
+    // Конструктор
+    SavingsAccount(const std::string& accNum, const std::string& owner, double initialBalance, double rate)
+        : BankAccount(accNum, owner, initialBalance), interestRate(rate) {}
+
+    // Метод для начисления процентов
+    void applyInterest() {
+        double interest = getBalance() * (interestRate / 100);
+        deposit(interest);
+        std::cout << "Начислены проценты: " << interest << ". Новый баланс: " << getBalance() << std::endl;
+    }
+};
+
+int main() {
+    // Создаем объект BankAccount
+    BankAccount myAccount("123456", "Иван Иванов", 1000.0);
+    myAccount.deposit(500);
+    myAccount.withdraw(200);
+    myAccount.withdraw(1500); // Попытка снять больше, чем на счету
+
+    // Создаем объект SavingsAccount
+    SavingsAccount mySavingsAccount("654321", "Петр Петров", 2000.0, 5.0);
+    mySavingsAccount.deposit(300);
+    mySavingsAccount.withdraw(100);
+    mySavingsAccount.applyInterest(); // Начисление процентов
+
+    return 0;
+}
